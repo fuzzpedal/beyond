@@ -14,7 +14,7 @@ export const LessonView: FC<Props> = ({lesson}) => {
       </Text>
       {lesson.studentNames.map((name: string) => (
         <View key={name}>
-          <Text>{name}</Text>
+          <Text style={styles.nameText}>{name}</Text>
         </View>
       ))}
     </View>

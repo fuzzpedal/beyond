@@ -2,9 +2,29 @@ import axios, {Axios, all} from 'axios';
 import {AUTH_TOKEN} from 'react-native-dotenv';
 import {API_BASE_URL, SCHOOL_ID} from 'react-native-dotenv';
 
+import {storage} from '../storage'
+import { IAdditionalClassData, IAdditionalClassDataResponse, IClass, IDayLesson, IEmployeeResponseWithClasses, ILesson, IStudent, IWeek, weekDays } from './types';
+
 const jamesBrownId = 'A1248519453';
 
+interface ICacheItem {
+  created: number
+  data: any
+}
+
+const CACHE_LIFETIME = 1000 * 60 * 10  // 10 minutes
+
 export const queryApi = async <T>(url: string): Promise<T | Error> => {
+  const cacheKey = url;
+  const cached = storage.getString(url);
+  if (cached) {
+    const cacheResult: ICacheItem = JSON.parse(cached);
+    const now = new Date().valueOf();
+    if (cacheResult.created + CACHE_LIFETIME > now) {
+      return cacheResult.data;
+    }
+  }
+
   try {
     const response = await axios.get(url, {
       headers: {
@@ -12,6 +32,11 @@ export const queryApi = async <T>(url: string): Promise<T | Error> => {
       },
     });
     if (response && response.status === 200) {
+      const toCache:ICacheItem = {
+        created: new Date().valueOf(),
+        data: response.data
+      }
+      storage.set(cacheKey, JSON.stringify(toCache));
       return response.data as T;
     }
     return {
@@ -48,7 +73,11 @@ const getAdditionalDataByClassId = async (classId: string): Promise<IAdditionalC
 
 export const getStudentsForWeek = async (): Promise<IWeek> => {
   
-  const week: any = {}
+  const week: IWeek = {}
+  for (const day of weekDays) {
+    week[day] = [];
+  }
+
   const classes = await getClassesByEmployeeId(jamesBrownId);
 
     for (const class_ of classes) {
@@ -67,12 +96,15 @@ export const getStudentsForWeek = async (): Promise<IWeek> => {
         week[day].push({
           startTime: lessonStart,
           endTime: lessonEnd,
-          studentNames: [...studentNames]
+          studentNames: [...studentNames.sort()]
         });
-
       }
     }
   }
-  // console.log(JSON.stringify(week))
+
+  for (const day of weekDays) {
+    week[day].sort((a: IDayLesson, b: IDayLesson) => a.startTime > b.startTime ? 1 : -1 );
+  }
+
   return week
 };

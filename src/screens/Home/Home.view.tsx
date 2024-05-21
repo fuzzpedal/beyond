@@ -1,27 +1,11 @@
-import {FC, useEffect, useState} from 'react';
-import {Button, FlatList, Text, TouchableOpacity, View} from 'react-native';
+import {FC, createRef, useEffect, useState} from 'react';
+import {FlatList, Text, TouchableOpacity, View} from 'react-native';
 import {getStudentsForWeek} from '../../api/query';
-import {Day} from '../../components/Day';
 import {Lesson} from '../../components/Lesson';
 import {styles} from './styles';
+import {IWeek, WeekDays, weekDays} from '../../api/types';
 
 const employeeId = 'A1248519453';
-
-enum WeekDays {
-  MONDAY = 'monday',
-  TUESDAY = 'tuesday',
-  WEDNESDAY = 'wednesday',
-  THURSDAY = 'thursday',
-  FRIDAY = 'friday',
-}
-
-const weekDays = [
-  WeekDays.MONDAY,
-  WeekDays.TUESDAY,
-  WeekDays.WEDNESDAY,
-  WeekDays.THURSDAY,
-  WeekDays.FRIDAY,
-];
 
 export const HomeView: FC = () => {
   const [week, setWeek] = useState<IWeek>();
@@ -37,8 +21,8 @@ export const HomeView: FC = () => {
 
   if (!week) {
     return (
-      <View>
-        <Text>Loading...</Text>
+      <View style={styles.loadingContainer}>
+        <Text style={styles.loadingText}>Loading...</Text>
       </View>
     );
   }
@@ -55,7 +39,9 @@ export const HomeView: FC = () => {
           </TouchableOpacity>
         ))}
       </View>
-      <Text style={styles.selectedDayText}>{selectedDay}</Text>
+      <View style={styles.selectedDay}>
+        <Text style={styles.selectedDayText}>{selectedDay}</Text>
+      </View>
       <FlatList
         data={week[selectedDay]}
         renderItem={({item}) => <Lesson lesson={item} />}

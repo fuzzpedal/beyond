@@ -1,10 +1,10 @@
-interface IWondeDateTime {
+export interface IWondeDateTime {
   date: string
   timezone_type: number
   timezone: string
 }
 
-interface IClass {
+export interface IClass {
   id: string
   mis_id: string
   code: string
@@ -18,7 +18,7 @@ interface IClass {
   updated_at: IWondeDateTime
 }
 
-interface ILessonPeriod {
+export interface ILessonPeriod {
   id:	string
   start_time: string
   end_time: string
@@ -28,13 +28,13 @@ interface ILessonPeriod {
   updated_at: IWondeDateTime
 }
 
-interface ILesson {
+export interface ILesson {
     period: {
         data: ILessonPeriod
     }
 }
 
-interface IAdditionalClassData {
+export interface IAdditionalClassData {
     students: {
         data: IStudent[]
     }
@@ -44,11 +44,11 @@ interface IAdditionalClassData {
     & IStudent
 }
 
-interface IAdditionalClassDataResponse {
+export interface IAdditionalClassDataResponse {
     data: IAdditionalClassData
 }
 
-interface IEmployee {
+export interface IEmployee {
   id: string
   upi: string
   mis_id: string
@@ -66,7 +66,7 @@ interface IEmployee {
   updated_at: IWondeDateTime
 }
 
-interface IEmployeeResponseWithClasses {
+export interface IEmployeeResponseWithClasses {
   data: {
     classes: {
         data: IClass[]
@@ -76,7 +76,7 @@ interface IEmployeeResponseWithClasses {
   meta?: any
 }
 
-interface IStudent {
+export interface IStudent {
   id: string
   upi: string
   initials: string
@@ -95,14 +95,29 @@ interface IStudent {
   updated_at: IWondeDateTime
 }
 
-interface IDayLesson {
+export interface IDayLesson {
   startTime: string
   endTime: string
   studentNames: string[]
 }
 
-interface IWeek {
-  [day:string]: 
+export enum WeekDays {
+  MONDAY = 'monday',
+  TUESDAY = 'tuesday',
+  WEDNESDAY = 'wednesday',
+  THURSDAY = 'thursday',
+  FRIDAY = 'friday',
+}
+
+export const weekDays = [
+  WeekDays.MONDAY,
+  WeekDays.TUESDAY,
+  WeekDays.WEDNESDAY,
+  WeekDays.THURSDAY,
+  WeekDays.FRIDAY,
+];
+
+export interface IWeek {
+  [day: string]: 
     IDayLesson[]
-  
 }
