@@ -1,0 +1,1 @@
+export {DayView as Day} from './Day.view'
