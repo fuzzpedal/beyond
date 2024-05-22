@@ -1,12 +1,14 @@
-import {FC} from 'react';
-import {Text, View} from 'react-native';
-import {styles} from './styles';
+import { FC } from 'react';
+import { Text, View } from 'react-native';
+
+import { IDayLesson } from '../../api/types';
+import { styles } from './styles';
 
 interface Props {
   lesson: IDayLesson;
 }
 
-export const LessonView: FC<Props> = ({lesson}) => {
+export const LessonView: FC<Props> = ({ lesson }) => {
   return (
     <View>
       <Text style={styles.lessonTimeText}>

@@ -1,17 +1,10 @@
-import axios, {Axios, all} from 'axios';
-import {AUTH_TOKEN} from 'react-native-dotenv';
-import {API_BASE_URL, SCHOOL_ID} from 'react-native-dotenv';
+import axios from 'axios';
+import { API_BASE_URL, AUTH_TOKEN, SCHOOL_ID } from 'react-native-dotenv';
 
-import {storage} from '../storage'
-import { IAdditionalClassData, IAdditionalClassDataResponse, IClass, IDayLesson, IEmployeeResponseWithClasses, ILesson, IStudent, IWeek, weekDays } from './types';
+import { storage } from '../storage'
+import { IAdditionalClassData, IAdditionalClassDataResponse, ICacheItem, IClass, IDayLesson, IEmployeeResponseWithClasses, IStudent, IWeek, weekDays } from './types';
 
 const jamesBrownId = 'A1248519453';
-
-interface ICacheItem {
-  created: number
-  data: any
-}
-
 const CACHE_LIFETIME = 1000 * 60 * 10  // 10 minutes
 
 export const queryApi = async <T>(url: string): Promise<T | Error> => {
@@ -71,20 +64,18 @@ const getAdditionalDataByClassId = async (classId: string): Promise<IAdditionalC
 };
 
 
-export const getStudentsForWeek = async (): Promise<IWeek> => {
-  
+export const getWeekPlan = async (): Promise<IWeek> => {
   const week: IWeek = {}
   for (const day of weekDays) {
     week[day] = [];
   }
 
   const classes = await getClassesByEmployeeId(jamesBrownId);
-
-    for (const class_ of classes) {
+  for (const class_ of classes) {
     const additionalData = await getAdditionalDataByClassId(class_.id);
 
     if (additionalData) {
-      const studentNames = additionalData.students.data.map((student: IStudent) => `${student.forename} ${student.surname}`)
+      const studentNames = additionalData.students.data.map((student: IStudent) => `${student.forename} ${student.surname}`);
       const lessons = additionalData.lessons.data;
       for (const lesson of lessons) {
         const day = lesson.period.data.day;
@@ -102,6 +93,7 @@ export const getStudentsForWeek = async (): Promise<IWeek> => {
     }
   }
 
+  // sort lessons by start time
   for (const day of weekDays) {
     week[day].sort((a: IDayLesson, b: IDayLesson) => a.startTime > b.startTime ? 1 : -1 );
   }

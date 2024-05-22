@@ -1,11 +1,10 @@
-import {FC, createRef, useEffect, useState} from 'react';
-import {FlatList, Text, TouchableOpacity, View} from 'react-native';
-import {getStudentsForWeek} from '../../api/query';
-import {Lesson} from '../../components/Lesson';
-import {styles} from './styles';
-import {IWeek, WeekDays, weekDays} from '../../api/types';
+import { FC, useEffect, useState } from 'react';
+import { FlatList, Text, TouchableOpacity, View } from 'react-native';
 
-const employeeId = 'A1248519453';
+import { getWeekPlan } from '../../api/query';
+import { IWeek, WeekDays, weekDays } from '../../api/types';
+import { Lesson } from '../../components/Lesson';
+import { styles } from './styles';
 
 export const HomeView: FC = () => {
   const [week, setWeek] = useState<IWeek>();
@@ -13,7 +12,7 @@ export const HomeView: FC = () => {
 
   useEffect(() => {
     const init = async () => {
-      const result = await getStudentsForWeek();
+      const result = await getWeekPlan();
       setWeek(result);
     };
     init();
@@ -44,7 +43,7 @@ export const HomeView: FC = () => {
       </View>
       <FlatList
         data={week[selectedDay]}
-        renderItem={({item}) => <Lesson lesson={item} />}
+        renderItem={({ item }) => <Lesson lesson={item} />}
       />
     </View>
   );

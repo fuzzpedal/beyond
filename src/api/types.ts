@@ -1,3 +1,8 @@
+export interface ICacheItem {
+  created: number
+  data: any
+}
+
 export interface IWondeDateTime {
   date: string
   timezone_type: number
